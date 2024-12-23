@@ -9,10 +9,13 @@ pnpm run start
 预览：http://localhost:30000/api
 
 # 部署
-1. 复制 build/deploy.sh 到服务器目录 /var/www/network-mall-gost
-2. 在上述服务器目录下新建 prod.yaml,以 src/config/prod.yaml 为木板
-3. 运行 sudo ./deploy.sh 
 
+1. 复制 build/deploy.sh 到服务器目录 /var/www/network-mall-gost
+2. 在上述目录下新建 prod.yaml,以 src/config/prod.yaml 为木板
+3. 在上述目录下新建 .env,以 .env 为模板
+4. 运行 sudo ./deploy.sh 
+
+TODO: 区分生产测试环境
 
 # 背景
 
