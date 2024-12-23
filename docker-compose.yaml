@@ -23,4 +23,4 @@ services:
     ports:
       - '30000:30000'
     depends_on:
-      gost
+      - gost
