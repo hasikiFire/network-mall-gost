@@ -22,7 +22,7 @@ export class ConfigureService {
     private readonly serverService: ServerService,
   ) {
     this.gostHost = this.configService.get<string>('gost.host');
-    this.beginPort = Number(this.configService.get<string>('app.port')) + 5; // 前两位给 gost api 用
+    this.beginPort = Number(this.configService.get<string>('app.port')) + 2; // 前两位给 gost api 用
     this.loadConfig();
   }
 
