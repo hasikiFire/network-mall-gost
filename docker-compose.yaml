@@ -3,7 +3,8 @@ services:
     image: gogost/gost
     container_name: gostv3
     volumes:
-      - ./dist/config/gost/config.yaml:/etc/gost/config.yaml
+      # 使用源代码目录
+      - ./src/config/gost/gost.yaml:/etc/gost/config.yaml
       - /etc/letsencrypt/live/${DOMAIN}/fullchain.pem:/etc/gost/fullchain.pem
       - /etc/letsencrypt/live/${DOMAIN}/privkey.pem:/etc/gost/privkey.pem
     network_mode: 'host'
