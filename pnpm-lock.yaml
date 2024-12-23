@@ -71,9 +71,12 @@ importers:
       mysql2:
         specifier: ^3.11.0
         version: 3.11.0
-      project-name:
+      network-mall-gost:
         specifier: 'file:'
         version: file:(express@4.19.2)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))
+      project-name:
+        specifier: 'file:'
+        version: network-mall-gost@file:(express@4.19.2)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -2547,6 +2550,9 @@ packages:
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
+  'network-mall-gost@file:':
+    resolution: {directory: '', type: directory}
+
   node-abort-controller@3.1.1:
     resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
 
@@ -2741,9 +2747,6 @@ packages:
 
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
-
-  'project-name@file:':
-    resolution: {directory: '', type: directory}
 
   promise-coalesce@1.1.2:
     resolution: {integrity: sha512-zLaJ9b8hnC564fnJH6NFSOGZYYdzrAJn2JUUIwzoQb32fG2QAakpDNM+CZo1km6keXkRXRM+hml1BFAPVnPkxg==}
@@ -6363,6 +6366,72 @@ snapshots:
 
   neo-async@2.6.2: {}
 
+  network-mall-gost@file:(express@4.19.2)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4)):
+    dependencies:
+      '@liaoliaots/nestjs-redis': 10.0.0(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))(ioredis@5.4.1)
+      '@nestjs/axios': 3.0.2(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(axios@1.7.3)(rxjs@7.8.1)
+      '@nestjs/cache-manager': 2.2.2(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))(cache-manager@5.7.6)(rxjs@7.8.1)
+      '@nestjs/common': 10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/config': 3.2.3(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(rxjs@7.8.1)
+      '@nestjs/core': 10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/jwt': 10.2.0(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))
+      '@nestjs/platform-express': 10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10)
+      '@nestjs/schedule': 4.1.1(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))
+      '@nestjs/swagger': 7.4.0(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
+      '@nestjs/terminus': 10.2.3(@nestjs/axios@3.0.2(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(axios@1.7.3)(rxjs@7.8.1))(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/typeorm@10.0.2(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(ioredis@5.4.1)(mysql2@3.11.0)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(ioredis@5.4.1)(mysql2@3.11.0)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4)))
+      '@nestjs/typeorm': 10.0.2(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(ioredis@5.4.1)(mysql2@3.11.0)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4)))
+      amqplib: 0.10.4
+      axios: 1.7.3
+      bcrypt: 5.1.1
+      cache-manager: 5.7.6
+      cross-env: 7.0.3
+      decimal.js: 10.4.3
+      ioredis: 5.4.1
+      js-yaml: 4.1.0
+      mysql2: 3.11.0
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.1
+      swagger-ui-express: 5.0.1(express@4.19.2)
+      systeminformation: 5.23.5
+      typeorm: 0.3.20(ioredis@5.4.1)(mysql2@3.11.0)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))
+      winston: 3.14.1
+      winston-daily-rotate-file: 5.0.0(winston@3.14.1)
+      yaml: 2.5.0
+    transitivePeerDependencies:
+      - '@fastify/static'
+      - '@google-cloud/spanner'
+      - '@grpc/grpc-js'
+      - '@grpc/proto-loader'
+      - '@mikro-orm/core'
+      - '@mikro-orm/nestjs'
+      - '@nestjs/microservices'
+      - '@nestjs/mongoose'
+      - '@nestjs/sequelize'
+      - '@nestjs/websockets'
+      - '@prisma/client'
+      - '@sap/hana-client'
+      - better-sqlite3
+      - class-transformer
+      - class-validator
+      - debug
+      - encoding
+      - express
+      - hdb-pool
+      - mongodb
+      - mongoose
+      - mssql
+      - oracledb
+      - pg
+      - pg-native
+      - pg-query-stream
+      - redis
+      - sequelize
+      - sql.js
+      - sqlite3
+      - supports-color
+      - ts-node
+      - typeorm-aurora-data-api-driver
+
   node-abort-controller@3.1.1: {}
 
   node-addon-api@5.1.0: {}
@@ -6530,71 +6599,6 @@ snapshots:
       react-is: 18.3.1
 
   process-nextick-args@2.0.1: {}
-
-  project-name@file:(express@4.19.2)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4)):
-    dependencies:
-      '@liaoliaots/nestjs-redis': 10.0.0(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))(ioredis@5.4.1)
-      '@nestjs/axios': 3.0.2(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(axios@1.7.3)(rxjs@7.8.1)
-      '@nestjs/cache-manager': 2.2.2(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))(cache-manager@5.7.6)(rxjs@7.8.1)
-      '@nestjs/common': 10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1)
-      '@nestjs/config': 3.2.3(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(rxjs@7.8.1)
-      '@nestjs/core': 10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1)
-      '@nestjs/jwt': 10.2.0(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))
-      '@nestjs/platform-express': 10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10)
-      '@nestjs/schedule': 4.1.1(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))
-      '@nestjs/swagger': 7.4.0(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
-      '@nestjs/terminus': 10.2.3(@nestjs/axios@3.0.2(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(axios@1.7.3)(rxjs@7.8.1))(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/typeorm@10.0.2(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(ioredis@5.4.1)(mysql2@3.11.0)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(ioredis@5.4.1)(mysql2@3.11.0)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4)))
-      '@nestjs/typeorm': 10.0.2(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.3.10(@nestjs/common@10.3.10(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.3.10)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(ioredis@5.4.1)(mysql2@3.11.0)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4)))
-      amqplib: 0.10.4
-      axios: 1.7.3
-      bcrypt: 5.1.1
-      cache-manager: 5.7.6
-      cross-env: 7.0.3
-      ioredis: 5.4.1
-      js-yaml: 4.1.0
-      mysql2: 3.11.0
-      reflect-metadata: 0.2.2
-      rxjs: 7.8.1
-      swagger-ui-express: 5.0.1(express@4.19.2)
-      systeminformation: 5.23.5
-      typeorm: 0.3.20(ioredis@5.4.1)(mysql2@3.11.0)(ts-node@10.9.2(@types/node@20.14.14)(typescript@5.5.4))
-      winston: 3.14.1
-      winston-daily-rotate-file: 5.0.0(winston@3.14.1)
-      yaml: 2.5.0
-    transitivePeerDependencies:
-      - '@fastify/static'
-      - '@google-cloud/spanner'
-      - '@grpc/grpc-js'
-      - '@grpc/proto-loader'
-      - '@mikro-orm/core'
-      - '@mikro-orm/nestjs'
-      - '@nestjs/microservices'
-      - '@nestjs/mongoose'
-      - '@nestjs/sequelize'
-      - '@nestjs/websockets'
-      - '@prisma/client'
-      - '@sap/hana-client'
-      - better-sqlite3
-      - class-transformer
-      - class-validator
-      - debug
-      - encoding
-      - express
-      - hdb-pool
-      - mongodb
-      - mongoose
-      - mssql
-      - oracledb
-      - pg
-      - pg-native
-      - pg-query-stream
-      - redis
-      - sequelize
-      - sql.js
-      - sqlite3
-      - supports-color
-      - ts-node
-      - typeorm-aurora-data-api-driver
 
   promise-coalesce@1.1.2: {}
 
