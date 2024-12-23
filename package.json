@@ -1,5 +1,5 @@
 {
-  "name": "project-name",
+  "name": "network-mall-gost",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -41,6 +41,7 @@
     "ioredis": "^5.4.1",
     "js-yaml": "^4.1.0",
     "mysql2": "^3.11.0",
+    "network-mall-gost": "file:",
     "project-name": "file:",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",

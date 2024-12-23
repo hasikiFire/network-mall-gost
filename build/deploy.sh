@@ -9,10 +9,6 @@ ENV=${1:-main} # 默认环境为 main
 # 定义分支
 BRANCH_NAME=$ENV
 
-# 定义 Docker 镜像和容器名称
-IMAGE_NAME="hasikifire/network-mall-gost-$ENV"
-CONTAINER_NAME="network-mall-gost-$ENV"
-
 # 定义 GitHub 仓库 URL 和本地路径
 REPO_URL="https://github.com/hasikiFire/network-mall-gost.git"
 LOCAL_PATH="$ENV"
@@ -36,6 +32,10 @@ git clone $REPO_URL $LOCAL_PATH
 echo "复制 prod.yaml "
 cp -f prod.yaml "$CONFIG_PATH/prod.yaml"
 
+ 
+echo "复制 .env "
+cp -f .env "$LOCAL_PATH/.env"
+
 cd $LOCAL_PATH
 # 切换到指定分支
 echo "切换到 $BRANCH_NAME 分支..."
@@ -43,21 +43,14 @@ git checkout $BRANCH_NAME
 
 # Step 3: 构建 Docker 镜像
 echo "构建 Docker 镜像..."
-docker build -t $IMAGE_NAME .
+docker-compose build
 
 # Step 4: 停止并删除现有的 Docker 容器
-containers=$(docker ps -a -q -f name=$CONTAINER_NAME)
-if [ -n "$containers" ]; then
-  echo "停止现有容器..."
-  docker stop $CONTAINER_NAME
-  echo "删除容器..."
-  docker rm $CONTAINER_NAME
-else
-  echo "没有正在运行的容器"
-fi
+echo "停止并删除现有的容器..."
+docker-compose down
 
-# Step 5: 运行新的 Docker 容器
-echo "运行新的 Docker 容器..."
-docker run -d --name $CONTAINER_NAME --network host $IMAGE_NAME
+# Step 5: 启动新的 Docker 容器
+echo "启动新的容器..."
+docker-compose up -d
 
 echo "部署完成。"

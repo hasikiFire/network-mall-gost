@@ -1,12 +1,6 @@
 version: '3.8'
 
 services:
-  gost-server:
-    image: gost-server-${ENV}
-    container_name: nest-app
-    volumes:
-      - ./dist/config/gost:/app/config/ # 假设配置文件在这个路径
-    restart: unless-stopped
   gost:
     image: gogost/gost
     container_name: gostv3
@@ -17,3 +11,18 @@ services:
     network_mode: 'host'
     command: ['-C', '/etc/gost/config.yaml', '-D']
     restart: unless-stopped
+    env_file:
+      - .env
+
+  network-mall-gost:
+    image: network-mall-gost-${ENV}
+    container_name: network-mall-gost-${ENV}
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '30000:30000'
+    depends_on:
+      gost:
+        condition: service_healthy # 等待 gost 服务健康检查通过

@@ -1,24 +1,24 @@
 # 动态配置，每个套餐都起一个  service!!
-services:
-- name: service-30002
-  addr: :30002
-  observer: observeService # handler 上的观测器
-  handler:
-    type: http
-    auther: auther-0
-    limiter: limiter-0
-    observer: observeUser # handler 上的观测器
-    metadata:
-      limiter.refreshInterval: 30s
-      enableStats: true # 开启统计
-      observePeriod: 5s
-  listener:
-    type: tls
-  metadata:
-    knock: www.google.com
-    probeResist: file:/var/www/html/index.html
-    enableStats: true # 开启统计
-    observePeriod: 5s
+# services:
+# - name: service-30002
+#   addr: :30002
+#   observer: observeService # handler 上的观测器
+#   handler:
+#     type: http
+#     auther: auther-0
+#     limiter: limiter-0
+#     observer: observeUser # handler 上的观测器
+#     metadata:
+#       limiter.refreshInterval: 30s
+#       enableStats: true # 开启统计
+#       observePeriod: 5s
+#   listener:
+#     type: tls
+#   metadata:
+#     knock: www.google.com
+#     probeResist: file:/var/www/html/index.html
+#     enableStats: true # 开启统计
+# observePeriod: 5s
 
 tls:
   certFile: /etc/gost/fullchain.pem

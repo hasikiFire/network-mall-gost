@@ -7,7 +7,9 @@ class SystemInfo {
       const response = await axios.get('https://api.ipify.org?format=json');
       return response.data.ip;
     } catch (error) {
-      throw new Error('Unable to fetch external IP');
+      // 捕获特定错误并返回默认值或日志
+      console.error('Failed to fetch external IP:', error);
+      return '0.0.0.0'; // 返回默认值
     }
   }
 
