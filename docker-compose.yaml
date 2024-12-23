@@ -23,5 +23,4 @@ services:
     ports:
       - '30000:30000'
     depends_on:
-      gost:
-        condition: service_healthy # 等待 gost 服务健康检查通过
+      gost
