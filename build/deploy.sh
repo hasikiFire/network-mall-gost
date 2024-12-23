@@ -43,14 +43,14 @@ git checkout $BRANCH_NAME
 
 # Step 3: 构建 Docker 镜像
 echo "构建 Docker 镜像..."
-docker-compose build
+docker compose build
 
 # Step 4: 停止并删除现有的 Docker 容器
 echo "停止并删除现有的容器..."
-docker-compose down
+docker compose down
 
 # Step 5: 启动新的 Docker 容器
 echo "启动新的容器..."
-docker-compose up -d
+docker compose up -d
 
 echo "部署完成。"
