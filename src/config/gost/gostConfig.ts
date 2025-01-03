@@ -5,7 +5,7 @@ export const DefaultGostConfig: ServiceConfig = {
     type: 'http',
     auther: 'auther-0',
     limiter: 'limiter-0',
-    observer: 'observerUser',
+    observer: 'observeUser',
     metadata: {
       enableStats: true,
       observePeriod: '5s',
@@ -14,7 +14,7 @@ export const DefaultGostConfig: ServiceConfig = {
   listener: {
     type: 'tls',
   },
-  observer: 'observerService',
+  observer: 'observeService',
   metadata: {
     knock: 'www.google.com',
     probeResist: 'file:/var/www/html/index.html',
