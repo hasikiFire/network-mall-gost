@@ -1,13 +1,22 @@
 // logger.ts
 import { createLogger, format, transports } from 'winston';
 const DailyRotateFile = require('winston-daily-rotate-file');
+import { format as dateFnsFormat, toZonedTime } from 'date-fns-tz';
 
 // 自定义格式化
 const logFormat = format.combine(
-  format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), // 设置日志时间戳格式
+  format.timestamp(), // 使用默认时间戳
   format.printf(({ timestamp, level, message, stack }) => {
-    // 格式化日志条目，确保时间戳在消息之前
-    return `${timestamp} [${level}]: ${message}${stack ? `\n${stack}` : ''}`;
+    // 将时间戳转换为中国标准时间（Asia/Shanghai）
+    const zonedTimestamp = toZonedTime(timestamp, 'Asia/Shanghai');
+    const formattedTimestamp = dateFnsFormat(
+      zonedTimestamp,
+      'yyyy-MM-dd HH:mm:ss',
+      {
+        timeZone: 'Asia/Shanghai',
+      },
+    );
+    return `${formattedTimestamp} [${level}]: ${message}${stack ? `\n${stack}` : ''}`;
   }),
 );
 

@@ -61,15 +61,7 @@ export class UsageRecord {
     comment: '在线的设备数量',
   })
   deviceNum: number | null;
-
-  @Column('varchar', {
-    name: 'subscription_link',
-    nullable: true,
-    comment: '订阅链接',
-    length: 255,
-  })
-  subscriptionLink: string | null;
-
+ 
   @Column('timestamp', {
     name: 'created_at',
     comment: '创建时间',

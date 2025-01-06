@@ -37,6 +37,7 @@
     "bcrypt": "^5.1.1",
     "cache-manager": "^5.7.6",
     "cross-env": "^7.0.3",
+    "date-fns-tz": "^3.2.0",
     "decimal.js": "^10.4.3",
     "ioredis": "^5.4.1",
     "js-yaml": "^4.1.0",
