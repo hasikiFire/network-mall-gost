@@ -61,7 +61,14 @@ export class UsageRecord {
     comment: '在线的设备数量',
   })
   deviceNum: number | null;
- 
+
+  @Column('int', {
+    name: 'device_num',
+    nullable: true,
+    comment: '在线设备数量限额',
+  })
+  deviceLimit: number | null;
+
   @Column('timestamp', {
     name: 'created_at',
     comment: '创建时间',
