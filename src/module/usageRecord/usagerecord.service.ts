@@ -64,6 +64,7 @@ export class UsageRecordService {
    */
   async updateRecordsWithLock(incrementMap: Record<number, Decimal>) {
     const userIds = Object.keys(incrementMap).sort(); // 固定的顺序存取表中的行，这样只会发生锁的阻塞等待
+    if (!userIds.length) return;
     try {
       await this.usageRecordRepository.manager.transaction(
         async (transactionalEntityManager) => {
