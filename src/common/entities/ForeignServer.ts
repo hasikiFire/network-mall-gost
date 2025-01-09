@@ -125,7 +125,6 @@ export class ForeignServer {
   @Column('tinyint', {
     name: 'status',
     comment: '服务器的状态。0: 停止 1：活动，2：过期',
-    width: 1,
   })
   status: number;
 
@@ -133,8 +132,9 @@ export class ForeignServer {
     name: 'is_beyond_transfer',
     nullable: true,
     comment: '是否超过默认流量包限额(1：是，0：否)',
+    width: 1,
   })
-  isBeyondTransfer: number | null;
+  isBeyondTransfer: boolean | null;
 
   @Column('tinyint', {
     name: 'deleted',

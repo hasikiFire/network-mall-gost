@@ -48,6 +48,22 @@ export class UsageRecord {
   consumedDataTransfer: string | null;
 
   @Column('bigint', {
+    name: 'consumed_data_download',
+    nullable: true,
+    comment: '用户已消耗的下行流量（单位：B）',
+    unsigned: true,
+  })
+  consumedDataDownload: string | null;
+
+  @Column('bigint', {
+    name: 'consumed_data_upload',
+    nullable: true,
+    comment: '用户已消耗的上行流量（单位：B）',
+    unsigned: true,
+  })
+  consumedDataUpload: string | null;
+
+  @Column('bigint', {
     name: 'speed_limit',
     nullable: true,
     comment: '流量速率限额（单位：B）',
@@ -63,7 +79,7 @@ export class UsageRecord {
   deviceNum: number | null;
 
   @Column('int', {
-    name: 'device_num',
+    name: 'device_limit',
     nullable: true,
     comment: '在线设备数量限额',
   })

@@ -16,23 +16,18 @@ export class PayOrderItem {
   @Column('bigint', { name: 'package_id', comment: '套餐主键' })
   packageId: string;
 
-  @Column('varchar', { name: 'package_name', comment: '套餐名称', length: 100 })
-  packageName: string;
-
-  @Column('varchar', {
-    name: 'package_desc',
-    nullable: true,
-    comment: '套餐描述',
-    length: 100,
-  })
-  packageDesc: string | null;
-
   @Column('int', {
     name: 'package_unit',
     comment: '计费周期。单位：月份',
     default: () => "'0'",
   })
   packageUnit: number;
+
+  @Column('varchar', { name: 'package_name', comment: '套餐名称', length: 100 })
+  packageName: string;
+
+  @Column('text', { name: 'package_desc', nullable: true, comment: '套餐描述' })
+  packageDesc: string | null;
 
   @Column('decimal', {
     name: 'original_price',
@@ -74,11 +69,11 @@ export class PayOrderItem {
   })
   discountEndDate: Date | null;
 
-  @Column('int', {
+  @Column('bigint', {
     name: 'data_allowance',
-    comment: '数据流量限额（单位：GB）',
+    comment: '数据流量限额（单位：B）',
   })
-  dataAllowance: number;
+  dataAllowance: string;
 
   @Column('int', {
     name: 'device_limit',
@@ -87,12 +82,13 @@ export class PayOrderItem {
   })
   deviceLimit: number | null;
 
-  @Column('int', {
+  @Column('bigint', {
     name: 'speed_limit',
     nullable: true,
-    comment: '速率限制（单位：Mbps）',
+    comment: '流量速率限额（单位：B）',
+    unsigned: true,
   })
-  speedLimit: number | null;
+  speedLimit: string | null;
 
   @Column('tinyint', {
     name: 'deleted',

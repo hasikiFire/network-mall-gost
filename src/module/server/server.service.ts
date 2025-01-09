@@ -92,7 +92,7 @@ export class ServerService {
    * @param incrementMap
    *
    */
-  async updateServerWithLock(incrementMap: Record<number, Decimal>) {
+  async updateServerWithLock(increament: Decimal) {
     try {
       await this.foreignServerRepository.manager.transaction(
         async (transactionalEntityManager) => {
@@ -106,7 +106,7 @@ export class ServerService {
 
           this.logger.log(
             '[pluginService][updateServerWithLock] 待更新数据量：',
-            incrementMap,
+            increament,
           );
 
           if (!serverData) {
@@ -116,16 +116,10 @@ export class ServerService {
             return;
           }
 
-          // 使用 Decimal 进行高精度计算
-          const allBytes = Object.keys(incrementMap).reduce(
-            (pre, cur) => new Decimal(pre).plus(incrementMap[cur]),
-            new Decimal(0),
-          );
-
           serverData.consumedDataTransfer = new Decimal(
             serverData.consumedDataTransfer,
           )
-            .add(allBytes)
+            .add(increament)
             .toString();
           if (
             new Decimal(serverData.consumedDataTransfer).greaterThanOrEqualTo(
@@ -133,7 +127,7 @@ export class ServerService {
             )
           ) {
             // 更新状态服务器监控用到
-            serverData.isBeyondTransfer = 1;
+            serverData.isBeyondTransfer = true;
           }
 
           await transactionalEntityManager.save(serverData);

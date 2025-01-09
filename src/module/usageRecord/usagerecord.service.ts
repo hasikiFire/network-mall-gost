@@ -14,6 +14,7 @@ import { MyLoggerService } from '../help/logger/logger.service';
 import { RabbitMQService } from '../help/rabbitMQ/rabbitmq.service';
 import { Cache } from 'cache-manager';
 import Decimal from 'decimal.js';
+import { IUserIncrement } from 'types/gost';
 
 @Injectable()
 export class UsageRecordService {
@@ -62,7 +63,7 @@ export class UsageRecordService {
    * 解决方法： 1. 对一个表而言，应尽量以固定的顺序存取表中的行
    * @param incrementMap
    */
-  async updateRecordsWithLock(incrementMap: Record<number, Decimal>) {
+  async updateRecordsWithLock(incrementMap: Map<string, IUserIncrement>) {
     const userIds = Object.keys(incrementMap).sort(); // 固定的顺序存取表中的行，这样只会发生锁的阻塞等待
     if (!userIds.length) return;
     try {
@@ -84,7 +85,11 @@ export class UsageRecordService {
 
           records = records.map((v) => {
             // 使用流量到达限制
-            if (incrementMap[v.userId].greaterThanOrEqualTo(v.dataAllowance)) {
+            if (
+              incrementMap[v.userId]?.totalByte.greaterThanOrEqualTo(
+                v.dataAllowance,
+              )
+            ) {
               v.purchaseStatus = 2;
 
               // 删除本系统缓存，瞬间禁用
@@ -102,7 +107,13 @@ export class UsageRecordService {
               });
             }
             v.consumedDataTransfer = new Decimal(v.consumedDataTransfer)
-              .plus(incrementMap[v.userId])
+              .plus(incrementMap[v.userId]?.totalByte)
+              .toString();
+            v.consumedDataDownload = new Decimal(v.consumedDataDownload)
+              .plus(incrementMap[v.userId]?.inputBytes)
+              .toString();
+            v.consumedDataUpload = new Decimal(v.consumedDataUpload)
+              .plus(incrementMap[v.userId]?.outputBytes)
               .toString();
 
             return v;

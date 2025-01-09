@@ -13,13 +13,17 @@ export class PackageItem {
   @Column('varchar', { name: 'package_name', comment: '套餐名称', length: 100 })
   packageName: string;
 
-  @Column('varchar', {
-    name: 'package_desc',
-    nullable: true,
-    comment: '套餐描述',
-    length: 100,
-  })
+  @Column('text', { name: 'package_desc', nullable: true, comment: '套餐描述' })
   packageDesc: string | null;
+
+  @Column('decimal', {
+    name: 'sale_price',
+    comment: '商品销售价',
+    precision: 10,
+    scale: 2,
+    default: () => "'0.00'",
+  })
+  salePrice: string;
 
   @Column('decimal', {
     name: 'original_price',
@@ -35,15 +39,6 @@ export class PackageItem {
     default: () => "'0'",
   })
   packageStatus: number;
-
-  @Column('decimal', {
-    name: 'sale_price',
-    comment: '商品销售价',
-    precision: 10,
-    scale: 2,
-    default: () => "'0.00'",
-  })
-  salePrice: string;
 
   @Column('decimal', {
     name: 'discount',
@@ -68,11 +63,9 @@ export class PackageItem {
   })
   discountEndDate: Date | null;
 
-  @Column('decimal', {
+  @Column('bigint', {
     name: 'data_allowance',
-    comment: '数据流量限额（单位：GB）',
-    precision: 12,
-    scale: 4,
+    comment: '数据流量限额（单位：B）',
   })
   dataAllowance: string;
 
@@ -83,12 +76,12 @@ export class PackageItem {
   })
   deviceLimit: number | null;
 
-  @Column('smallint', {
+  @Column('bigint', {
     name: 'speed_limit',
     nullable: true,
-    comment: '速率限制（单位：Mbps）',
+    comment: '速率限制（单位：B）',
   })
-  speedLimit: number | null;
+  speedLimit: string | null;
 
   @Column('tinyint', {
     name: 'deleted',
