@@ -130,6 +130,9 @@ export class PluginService {
       '[plugin][observeService] 增量数据：',
       increament.toString(),
     );
+    if (increament.isZero()) {
+      return;
+    }
     await this.serverService.updateServerWithLock(increament);
     // 检查是否需要重置
     if (this.serverTotalBytes.greaterThanOrEqualTo(this.RESET_THRESHOLD)) {
