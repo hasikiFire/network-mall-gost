@@ -14,8 +14,8 @@ services:
       - .env
 
   network-mall-gost:
-    image: network-mall-gost-${ENV}
-    container_name: network-mall-gost-${ENV}
+    image: network-mall-gost
+    container_name: network-mall-gost
     restart: unless-stopped
     build:
       context: .
