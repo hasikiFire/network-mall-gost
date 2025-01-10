@@ -97,7 +97,7 @@ export class PluginService {
     }
 
     // 处理剩余的数据
-    if (Object.keys(incrementMap).length > 0) {
+    if (incrementMap.size > 0) {
       await this.usageRecordService.updateRecordsWithLock(incrementMap);
     }
 
