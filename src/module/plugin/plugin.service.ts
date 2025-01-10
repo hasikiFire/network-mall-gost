@@ -65,9 +65,9 @@ export class PluginService {
       const preUserBytes = this.userTotalBytes.get(userID);
 
       const incrementByte = {
-        inputBytes: inputBytes.minus(preUserBytes.inputBytes),
-        outputBytes: outputBytes.minus(preUserBytes.outputBytes),
-        totalByte: totalByte.minus(preUserBytes.totalByte),
+        inputBytes: inputBytes.minus(preUserBytes?.inputBytes ?? 0),
+        outputBytes: outputBytes.minus(preUserBytes?.outputBytes ?? 0),
+        totalByte: totalByte.minus(preUserBytes?.totalByte ?? 0),
       };
       if (incrementByte.totalByte.isZero()) {
         continue;
