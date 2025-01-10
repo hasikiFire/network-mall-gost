@@ -95,8 +95,9 @@ export class PluginService {
     }
 
     this.logger.log(
-      '[plugin][observeUser]   userTotalBytes ',
-      JSON.stringify(this.userTotalBytes.entries()),
+      '[plugin][observeUser]   userTotalBytes size ',
+      this.userTotalBytes.size,
+      +';data:' + JSON.stringify(this.userTotalBytes.entries()),
     );
     // 定期重置 userTotalBytes
     if (this.userTotalBytes.size >= this.UHSER_RESET_THRESHOLD) {

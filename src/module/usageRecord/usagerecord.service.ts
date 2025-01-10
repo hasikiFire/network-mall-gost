@@ -98,10 +98,10 @@ export class UsageRecordService {
               .plus(item?.totalByte)
               .toString();
             v.consumedDataDownload = new Decimal(v.consumedDataDownload)
-              .plus(item?.inputBytes)
+              .plus(item?.outputBytes)
               .toString();
             v.consumedDataUpload = new Decimal(v.consumedDataUpload)
-              .plus(item?.outputBytes)
+              .plus(item?.inputBytes)
               .toString();
 
             // 使用流量到达限制
