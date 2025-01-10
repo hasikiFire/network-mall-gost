@@ -94,11 +94,11 @@ export class PluginService {
       await this.usageRecordService.updateRecordsWithLock(incrementMap);
     }
 
-    this.logger.log(
-      '[plugin][observeUser]   userTotalBytes size ',
-      this.userTotalBytes.size,
-      +';data:' + JSON.stringify(this.userTotalBytes.entries()),
-    );
+    // this.logger.log(
+    //   '[plugin][observeUser]   userTotalBytes size ',
+    //   this.userTotalBytes.size,
+    //   +';data:' + JSON.stringify(Object.fromEntries(this.userTotalBytes)),
+    // );
     // 定期重置 userTotalBytes
     if (this.userTotalBytes.size >= this.UHSER_RESET_THRESHOLD) {
       this.userTotalBytes.clear();

@@ -64,12 +64,11 @@ export class UsageRecordService {
    * @param incrementMap
    */
   async updateRecordsWithLock(incrementMap: Map<string, IUserIncrement>) {
-    this.logger.log(
-      '[pluginService][updateRecordsWithLock] 待更新数据量：',
-      JSON.stringify(Object.fromEntries(incrementMap)),
-    );
+    // this.logger.log(
+    //   '[pluginService][updateRecordsWithLock] 待更新数据量：',
+    //   JSON.stringify(Object.fromEntries(incrementMap)),
+    // );
     const userIds = Array.from(incrementMap.keys()).sort(); // 固定的顺序存取表中的行，这样只会发生锁的阻塞等待
-    console.log('userIds: ', userIds);
     if (!userIds.length) return;
     try {
       await this.usageRecordRepository.manager.transaction(
@@ -87,8 +86,8 @@ export class UsageRecordService {
           }
 
           this.logger.log(
-            '[pluginService][listenGost] 使用记录ID：',
-            records.map((v) => v.id),
+            '[pluginService][listenGost] 使用记录userID：',
+            records.map((v) => v.userId),
           );
 
           records = records.map((v) => {
