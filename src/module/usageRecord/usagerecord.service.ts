@@ -64,7 +64,7 @@ export class UsageRecordService {
    * @param incrementMap
    */
   async updateRecordsWithLock(incrementMap: Map<string, IUserIncrement>) {
-    const userIds = Object.keys(incrementMap).sort(); // 固定的顺序存取表中的行，这样只会发生锁的阻塞等待
+    const userIds = Array.from(incrementMap.keys()).sort(); // 固定的顺序存取表中的行，这样只会发生锁的阻塞等待
     if (!userIds.length) return;
     try {
       await this.usageRecordRepository.manager.transaction(
@@ -74,6 +74,12 @@ export class UsageRecordService {
             .setLock('pessimistic_write') // 行级锁
             .where('usage_record.userId IN (:...ids)', { ids: userIds })
             .getMany();
+          if (!records.length) {
+            this.logger.log(
+              '[pluginService][updateRecordsWithLock] 查询不到无可用套餐',
+            );
+            return;
+          }
           this.logger.log(
             '[pluginService][updateRecordsWithLock] 待更新数据量：',
             incrementMap,
@@ -84,14 +90,21 @@ export class UsageRecordService {
           );
 
           records = records.map((v) => {
-            // 使用流量到达限制
-            if (
-              incrementMap[v.userId]?.totalByte.greaterThanOrEqualTo(
-                v.dataAllowance,
-              )
-            ) {
-              v.purchaseStatus = 2;
+            const item = incrementMap.get(v.userId);
 
+            v.consumedDataTransfer = new Decimal(v.consumedDataTransfer)
+              .plus(item?.totalByte)
+              .toString();
+            v.consumedDataDownload = new Decimal(v.consumedDataDownload)
+              .plus(item?.inputBytes)
+              .toString();
+            v.consumedDataUpload = new Decimal(v.consumedDataUpload)
+              .plus(item?.outputBytes)
+              .toString();
+
+            // 使用流量到达限制
+            if (item?.totalByte.greaterThanOrEqualTo(v.dataAllowance)) {
+              v.purchaseStatus = 2;
               // 删除本系统缓存，瞬间禁用
               const lKey = `${CacheKey.LIMITER}-${v.userId}`;
               const aKey = `${CacheKey.AUTH}-${v.userId}`;
@@ -106,15 +119,6 @@ export class UsageRecordService {
                 },
               });
             }
-            v.consumedDataTransfer = new Decimal(v.consumedDataTransfer)
-              .plus(incrementMap[v.userId]?.totalByte)
-              .toString();
-            v.consumedDataDownload = new Decimal(v.consumedDataDownload)
-              .plus(incrementMap[v.userId]?.inputBytes)
-              .toString();
-            v.consumedDataUpload = new Decimal(v.consumedDataUpload)
-              .plus(incrementMap[v.userId]?.outputBytes)
-              .toString();
 
             return v;
           });
