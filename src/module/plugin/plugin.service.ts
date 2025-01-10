@@ -23,7 +23,7 @@ import { IUserIncrement } from 'types/gost';
  */
 @Injectable()
 export class PluginService {
-  private userTotalBytes = new Map<string, Decimal>();
+  private userTotalBytes = new Map<string, IUserIncrement>();
   private serverTotalBytes = new Decimal(0);
   private readonly UHSER_RESET_THRESHOLD = 364088; // 当 userTotalBytes 的大小达到 364,088 时重置, 50MB
   private readonly RESET_THRESHOLD = new Decimal('1e14'); // 例如，当值超过 10^18 时重置, 10PB
@@ -44,13 +44,13 @@ export class PluginService {
 
   /**
    * 在 gost.yaml 中设置触发间隔，默认为5分钟
-   * 所有数据为增量
+   * 进入数据为总量，又是分布式，所以需要计算增量才写入数据库
    **/
   async observeUser(data: IEventsResponseDTO) {
     this.logger.log('[plugin][observeUser] data: ', JSON.stringify(data));
     // 定义增量映射表，存放每个用户的 inputBytes、outputBytes 和 totalByte
     const incrementMap = new Map<string, IUserIncrement>();
-    // 确保异步操作按顺序执行
+
     for (const event of data.events) {
       const userID = event.client;
       if (!userID) {
@@ -62,31 +62,24 @@ export class PluginService {
       const totalByte = inputBytes.plus(outputBytes);
 
       // 获取用户之前的总字节数
-      const previousTotalByte =
-        this.userTotalBytes.get(userID) || new Decimal(0);
-      // 更新用户的总字节数
-      this.userTotalBytes.set(userID, totalByte);
+      const preUserBytes = this.userTotalBytes.get(userID);
 
-      const incrementTotalByte = totalByte.minus(previousTotalByte);
-      if (incrementTotalByte.isZero()) {
+      const incrementByte = {
+        inputBytes: inputBytes.minus(preUserBytes.inputBytes),
+        outputBytes: outputBytes.minus(preUserBytes.outputBytes),
+        totalByte: totalByte.minus(preUserBytes.totalByte),
+      };
+      if (incrementByte.totalByte.isZero()) {
         continue;
       }
+      // 更新用户的总字节数
+      this.userTotalBytes.set(userID, {
+        inputBytes: inputBytes,
+        outputBytes: outputBytes,
+        totalByte: totalByte,
+      });
 
-      // 初始化用户的增量映射表（如果不存在）
-      if (!incrementMap.has(userID)) {
-        incrementMap.set(userID, {
-          inputBytes: new Decimal(0),
-          outputBytes: new Decimal(0),
-          totalByte: new Decimal(0),
-        });
-      }
-
-      // 直接赋值好像也可以，但是怕会多个事件同个userID同时写入，所以还是用加法
-      const userIncrement = incrementMap.get(userID)!;
-      userIncrement.inputBytes = userIncrement.inputBytes.plus(inputBytes);
-      userIncrement.outputBytes = userIncrement.outputBytes.plus(outputBytes);
-      userIncrement.totalByte =
-        userIncrement.totalByte.plus(incrementTotalByte);
+      incrementMap.set(userID, incrementByte);
 
       // 定期清空 incrementMap,避免一次性写入太多数据到数据库
       if (incrementMap.size >= this.BATCH_SIZE) {
@@ -101,6 +94,10 @@ export class PluginService {
       await this.usageRecordService.updateRecordsWithLock(incrementMap);
     }
 
+    this.logger.log(
+      '[plugin][observeUser]   userTotalBytes ',
+      JSON.stringify(this.userTotalBytes.entries()),
+    );
     // 定期重置 userTotalBytes
     if (this.userTotalBytes.size >= this.UHSER_RESET_THRESHOLD) {
       this.userTotalBytes.clear();
@@ -109,7 +106,7 @@ export class PluginService {
   }
 
   /**
-   * 所有数据为增量
+   * 进入数据为总量，需要计算增量写入数据库
    * 在 gost.yaml 中设置触发间隔，默认为5分钟
    * service 跟套餐一一对应
    **/
