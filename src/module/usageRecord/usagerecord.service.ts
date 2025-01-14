@@ -86,7 +86,7 @@ export class UsageRecordService {
           }
 
           this.logger.log(
-            '[pluginService][listenGost] 使用记录userID：',
+            '[pluginService][updateRecordsWithLock] 使用记录userID：',
             records.map((v) => v.userId),
           );
 
@@ -106,32 +106,37 @@ export class UsageRecordService {
             // 使用流量到达限制
             if (item?.totalByte.greaterThanOrEqualTo(v.dataAllowance)) {
               v.purchaseStatus = 2;
-              // 删除本系统缓存，瞬间禁用
-              const lKey = `${CacheKey.LIMITER}-${v.userId}`;
-              const aKey = `${CacheKey.AUTH}-${v.userId}`;
-              this.cacheManager.del(lKey);
-              this.cacheManager.del(aKey);
-              //  通知其他 node 服务器也删除，避免用户切换服务器暂时还能用~~
-              // TODO 待测试
-              this.rabbitMQService.sendMessageToExchange({
-                method: 'deleteUser',
-                params: {
-                  userID: v.userId,
-                },
-              });
             }
-
             return v;
           });
 
           await transactionalEntityManager.save(records);
+          records.forEach((v) => {
+            // 删除本系统缓存，瞬间禁用
+            const lKey = `${CacheKey.LIMITER}-${v.userId}`;
+            const aKey = `${CacheKey.AUTH}-${v.userId}`;
+            this.cacheManager.del(lKey);
+            this.cacheManager.del(aKey);
+            //  通知其他 node 服务器也删除，避免用户切换服务器暂时还能用~~
+            // TODO 待测试
+            this.rabbitMQService.sendMessageToExchange({
+              method: 'deleteUser',
+              params: {
+                userID: v.userId,
+              },
+            });
+          });
+
           this.logger.log(
-            '[pluginService][listenGost]  update records success',
+            '[pluginService][updateRecordsWithLock]  update records success',
           );
         },
       );
     } catch (e) {
-      this.logger.error('[pluginService][listenGost]  update records faild', e);
+      this.logger.error(
+        '[pluginService][updateRecordsWithLock]  事务执行失败',
+        e,
+      );
     }
   }
 }
