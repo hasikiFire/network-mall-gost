@@ -94,13 +94,13 @@ export class UsageRecordService {
             const item = incrementMap.get(v.userId);
 
             v.consumedDataTransfer = new Decimal(v.consumedDataTransfer)
-              .plus(item?.totalByte)
+              .plus(new Decimal(item?.totalByte))
               .toString();
             v.consumedDataDownload = new Decimal(v.consumedDataDownload)
-              .plus(item?.outputBytes)
+              .plus(new Decimal(item?.outputBytes))
               .toString();
             v.consumedDataUpload = new Decimal(v.consumedDataUpload)
-              .plus(item?.inputBytes)
+              .plus(new Decimal(item?.inputBytes))
               .toString();
 
             // 使用流量到达限制
