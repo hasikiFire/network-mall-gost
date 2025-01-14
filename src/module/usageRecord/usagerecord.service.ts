@@ -112,19 +112,21 @@ export class UsageRecordService {
 
           await transactionalEntityManager.save(records);
           records.forEach((v) => {
-            // 删除本系统缓存，瞬间禁用
-            const lKey = `${CacheKey.LIMITER}-${v.userId}`;
-            const aKey = `${CacheKey.AUTH}-${v.userId}`;
-            this.cacheManager.del(lKey);
-            this.cacheManager.del(aKey);
-            //  通知其他 node 服务器也删除，避免用户切换服务器暂时还能用~~
-            // TODO 待测试
-            this.rabbitMQService.sendMessageToExchange({
-              method: 'deleteUser',
-              params: {
-                userID: v.userId,
-              },
-            });
+            if (v.purchaseStatus === 2) {
+              // 删除本系统缓存，瞬间禁用
+              const lKey = `${CacheKey.LIMITER}-${v.userId}`;
+              const aKey = `${CacheKey.AUTH}-${v.userId}`;
+              this.cacheManager.del(lKey);
+              this.cacheManager.del(aKey);
+              //  通知其他 node 服务器也删除，避免用户切换服务器暂时还能用~~
+              // TODO 待测试
+              this.rabbitMQService.sendMessageToExchange({
+                method: 'deleteUser',
+                params: {
+                  userID: v.userId,
+                },
+              });
+            }
           });
 
           this.logger.log(
