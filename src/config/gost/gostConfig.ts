@@ -8,7 +8,7 @@ export const DefaultGostConfig: ServiceConfig = {
     observer: 'observeUser',
     metadata: {
       enableStats: true,
-      observePeriod: '5s',
+      observePeriod: '120s',
     },
   },
   listener: {
