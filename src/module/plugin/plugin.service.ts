@@ -113,7 +113,7 @@ export class PluginService {
    **/
   async observeService(data: IEventsResponseDTO) {
     this.logger.log('[plugin][observeService] data: ', JSON.stringify(data));
-
+    // 增量用本服务缓存的，不得直接相加
     let tempTotalBytes = new Decimal(0);
     for (const event of data.events) {
       const inputBytes = new Decimal(event.stats?.inputBytes ?? 0);
@@ -123,7 +123,7 @@ export class PluginService {
     }
 
     const increament = tempTotalBytes.minus(this.serverTotalBytes);
-
+    this.serverTotalBytes = tempTotalBytes;
     this.logger.log(
       '[plugin][observeService] 增量数据：',
       increament.toString(),
@@ -140,10 +140,16 @@ export class PluginService {
   }
 
   async auther(data: IAuthUser) {
-    if (!data) return false;
+    if (!data) {
+      this.logger.error('[plugin][auther] data.username 获取不到用户数据 ');
+      return false;
+    }
     const userID = data.username || '';
     if (!userID) {
-      this.logger.error('[plugin][auth] data.username 获取不到用户ID ', userID);
+      this.logger.error(
+        '[plugin][auther] data.username 获取不到用户ID ',
+        userID,
+      );
       return false;
     }
 
@@ -164,7 +170,7 @@ export class PluginService {
       },
     });
     if (!user) {
-      this.logger.error('[plugin][auth] 找不到用户, userID: ', userID);
+      this.logger.error('[plugin][auther] 找不到用户, userID: ', userID);
       return false;
     }
     // 找到有效的使用记录
@@ -190,7 +196,10 @@ export class PluginService {
   async limiter(data: ILimiterDTO): Promise<ILimiterRepostDTO> {
     // this.logger.log('[plugin][limiter] data: ', JSON.stringify(data));
     const userID = data.client;
-    if (!userID) return { in: 0, out: 0 };
+    if (!userID) {
+      this.logger.error('[plugin][limiter] data.client 获取不到用户ID');
+      return { in: 0, out: 0 };
+    }
 
     const cacheKey = `${CacheKey.LIMITER}-${userID}`;
     const value = await this.cacheManager.get<number>(cacheKey);

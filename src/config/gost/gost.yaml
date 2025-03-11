@@ -30,12 +30,12 @@ observers:
   plugin:
     type: http
     addr: http://127.0.0.1:30000/plugin/observeUser
-    timeout: 10s
+    timeout: 120s
 - name: observeService
   plugin:
     type: http
     addr: http://127.0.0.1:30000/plugin/observeService
-    timeout: 10s
+    timeout: 120s
 
 # 固定值，接口观测
 authers:
