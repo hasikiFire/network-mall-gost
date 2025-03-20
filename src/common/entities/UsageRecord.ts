@@ -32,6 +32,13 @@ export class UsageRecord {
   @Column('timestamp', { name: 'purchase_end_time', comment: '结束日期' })
   purchaseEndTime: Date;
 
+  @Column('timestamp', {
+    name: 'next_reset_date',
+    comment: '下次流量重置日期',
+    nullable: true,
+  })
+  nextResetDate: Date;
+
   @Column('bigint', {
     name: 'data_allowance',
     comment: '数据流量限额（单位：B）',
