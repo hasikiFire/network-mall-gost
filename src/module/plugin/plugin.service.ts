@@ -50,7 +50,6 @@ export class PluginService {
     this.logger.log('[plugin][observeUser] data: ', JSON.stringify(data));
     // 定义增量映射表，存放每个用户的 inputBytes、outputBytes 和 totalByte
     const incrementMap = new Map<string, IUserIncrement>();
-    const tempUserTotalBytes = new Map<string, IUserIncrement>();
     for (const event of data.events) {
       const userID = event.client;
       if (!userID) {
@@ -74,11 +73,10 @@ export class PluginService {
       }
 
       incrementMap.set(userID, incrementByte);
-
       // 定期清空 incrementMap,避免一次性写入太多数据到数据库
       if (incrementMap.size >= this.BATCH_SIZE) {
         await this.usageRecordService.updateRecordsWithLock(incrementMap);
-        this.updateUserTotalBytes(tempUserTotalBytes);
+        this.updateUserTotalBytes(incrementMap);
         incrementMap.clear();
         this.logger.log('[plugin][observeUser] 清空 incrementMap');
       }
@@ -87,7 +85,8 @@ export class PluginService {
     // 处理剩余的数据
     if (incrementMap.size > 0) {
       await this.usageRecordService.updateRecordsWithLock(incrementMap);
-      this.updateUserTotalBytes(tempUserTotalBytes);
+      this.updateUserTotalBytes(incrementMap);
+      incrementMap.clear();
     }
 
     // this.logger.log(
@@ -107,7 +106,6 @@ export class PluginService {
     for (const [key, value] of temp) {
       this.userTotalBytes.set(key, value);
     }
-    temp.clear();
   }
 
   /**
