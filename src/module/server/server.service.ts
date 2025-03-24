@@ -104,10 +104,10 @@ export class ServerService {
             })
             .getOne();
 
-          this.logger.log(
-            '[pluginService][updateServerWithLock] 待更新数据量：',
-            increament,
-          );
+          // this.logger.log(
+          //   '[pluginService][updateServerWithLock] 待更新数据量：',
+          //   increament,
+          // );
 
           if (!serverData) {
             this.logger.error(
