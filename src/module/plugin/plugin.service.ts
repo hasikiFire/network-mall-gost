@@ -75,9 +75,9 @@ export class PluginService {
       };
       // 获取本服务器用户增量
       const incrementByte = {
-        inputBytes: inputBytes.minus(preUserBytes?.inputBytes),
-        outputBytes: outputBytes.minus(preUserBytes?.outputBytes),
-        totalByte: totalByte.minus(preUserBytes?.totalByte),
+        inputBytes: inputBytes.minus(preUserBytes?.inputBytes ?? 0),
+        outputBytes: outputBytes.minus(preUserBytes?.outputBytes ?? 0),
+        totalByte: totalByte.minus(preUserBytes?.totalByte ?? 0),
       };
       if (incrementByte.totalByte.isZero()) {
         continue;

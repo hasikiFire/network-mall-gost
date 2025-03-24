@@ -28,6 +28,14 @@ export class MyLoggerService implements LoggerService {
     // 处理 context 中的每个项，如果是数组则展平
     const contextStr = context
       .map((item) => {
+        // 如果是 Error 对象，提取关键信息
+        if (item instanceof Error) {
+          return JSON.stringify({
+            message: item.message,
+            stack: item.stack,
+            // 可添加其他需要的信息
+          });
+        }
         return JSON.stringify(item);
       })
       .join(';');

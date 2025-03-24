@@ -95,13 +95,13 @@ export class UsageRecordService {
             const item = incrementMap.get(v.userId);
 
             v.consumedDataTransfer = new Decimal(v.consumedDataTransfer ?? 0)
-              .plus(new Decimal(item?.totalByte))
+              .plus(new Decimal(item?.totalByte ?? 0))
               .toString();
             v.consumedDataDownload = new Decimal(v.consumedDataDownload ?? 0)
-              .plus(new Decimal(item?.outputBytes))
+              .plus(new Decimal(item?.outputBytes ?? 0))
               .toString();
             v.consumedDataUpload = new Decimal(v.consumedDataUpload ?? 0)
-              .plus(new Decimal(item?.inputBytes))
+              .plus(new Decimal(item?.inputBytes ?? 0))
               .toString();
 
             // 使用流量到达限制
@@ -140,7 +140,6 @@ export class UsageRecordService {
         '[pluginService][updateRecordsWithLock]  事务执行失败',
         e,
       );
-      console.log('e: ', e.toString());
     }
   }
 }
