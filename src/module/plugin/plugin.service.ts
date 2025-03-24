@@ -50,23 +50,34 @@ export class PluginService {
     this.logger.log('[plugin][observeUser] data: ', JSON.stringify(data));
     // 定义增量映射表，存放每个用户的 inputBytes、outputBytes 和 totalByte
     const incrementMap = new Map<string, IUserIncrement>();
+    const tempUserTotalBytes = new Map<string, IUserIncrement>();
     for (const event of data.events) {
       const userID = event.client;
       if (!userID) {
         continue;
       }
-      // 计算当前事件的 inputBytes 和 outputBytes
+      // 计算当前事件的输入输出总量
       const inputBytes = new Decimal(event.stats?.inputBytes ?? 0);
       const outputBytes = new Decimal(event.stats?.outputBytes ?? 0);
       const totalByte = inputBytes.plus(outputBytes);
+      // 本服务器已使用的总量缓存数据
+      tempUserTotalBytes.set(userID, {
+        inputBytes: inputBytes,
+        outputBytes: outputBytes,
+        totalByte: totalByte,
+      });
 
-      // 获取用户之前的总字节数
-      const preUserBytes = this.userTotalBytes.get(userID);
-
+      // 获取本服务器用户总量
+      const preUserBytes = this.userTotalBytes.get(userID) || {
+        inputBytes: new Decimal(0),
+        outputBytes: new Decimal(0),
+        totalByte: new Decimal(0),
+      };
+      // 获取本服务器用户增量
       const incrementByte = {
-        inputBytes: inputBytes.minus(preUserBytes?.inputBytes ?? 0),
-        outputBytes: outputBytes.minus(preUserBytes?.outputBytes ?? 0),
-        totalByte: totalByte.minus(preUserBytes?.totalByte ?? 0),
+        inputBytes: inputBytes.minus(preUserBytes?.inputBytes),
+        outputBytes: outputBytes.minus(preUserBytes?.outputBytes),
+        totalByte: totalByte.minus(preUserBytes?.totalByte),
       };
       if (incrementByte.totalByte.isZero()) {
         continue;
@@ -76,7 +87,7 @@ export class PluginService {
       // 定期清空 incrementMap,避免一次性写入太多数据到数据库
       if (incrementMap.size >= this.BATCH_SIZE) {
         await this.usageRecordService.updateRecordsWithLock(incrementMap);
-        this.updateUserTotalBytes(incrementMap);
+        this.updateUserTotalBytes(tempUserTotalBytes);
         incrementMap.clear();
         this.logger.log('[plugin][observeUser] 清空 incrementMap');
       }
@@ -85,7 +96,7 @@ export class PluginService {
     // 处理剩余的数据
     if (incrementMap.size > 0) {
       await this.usageRecordService.updateRecordsWithLock(incrementMap);
-      this.updateUserTotalBytes(incrementMap);
+      this.updateUserTotalBytes(tempUserTotalBytes);
       incrementMap.clear();
     }
 
@@ -94,18 +105,20 @@ export class PluginService {
     //   this.userTotalBytes.size,
     //   +';data:' + JSON.stringify(Object.fromEntries(this.userTotalBytes)),
     // );
-    // 定期重置 userTotalBytes
-    if (this.userTotalBytes.size >= this.UHSER_RESET_THRESHOLD) {
-      this.userTotalBytes.clear();
-      this.logger.log('[plugin][observeUser] 清空 userTotalBytes ');
-    }
+    // 定期重置 userTotalBytes,
+    // 有问题,会导致数据对不上的,重启本服务也不行,依赖gostv3,得重启gostv3
+    // if (this.userTotalBytes.size >= this.UHSER_RESET_THRESHOLD) {
+    //   this.userTotalBytes.clear();
+    //   this.logger.log('[plugin][observeUser] 清空 userTotalBytes ');
+    // }
   }
 
-  // 当数据库更新成功才更新本缓存，避免数据库更新失败造成资产流失
+  // 写入本服务器已使用的总量数据
   private updateUserTotalBytes(temp: Map<string, IUserIncrement>) {
     for (const [key, value] of temp) {
       this.userTotalBytes.set(key, value);
     }
+    temp.clear();
   }
 
   /**

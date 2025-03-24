@@ -74,10 +74,10 @@ export class ServerService {
       diskInfo.reduce((acc, cur) => acc + cur.used, 0),
     );
 
-    this.logger.log(
-      '[serverService] refreshServerStatus serverData',
-      JSON.stringify(serverData),
-    );
+    // this.logger.log(
+    //   '[serverService] refreshServerStatus serverData',
+    //   JSON.stringify(serverData),
+    // );
     await this.foreignServerRepository.save(serverData);
     this.logger.log('[serverService] refreshServerStatus success!!');
   }

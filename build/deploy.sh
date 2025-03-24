@@ -26,6 +26,12 @@ cp -f prod.yaml "$CONFIG_PATH/prod.yaml"
 echo "复制 .env..."
 cp -f .env "$LOCAL_PATH/.env"
 
+ 
+echo ">> 创建日志目录并设置权限..."
+mkdir -p ./logs
+chmod 777 ./logs  # 确保容器有写入权限
+
+
 cd $LOCAL_PATH
 
 # Step 3: 构建 Docker 镜像
