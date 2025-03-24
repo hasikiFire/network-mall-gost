@@ -7,7 +7,7 @@ services:
       - ./src/config/gost/gost.yaml:/etc/gost/config.yaml
       - /etc/letsencrypt/live/${DOMAIN}/fullchain.pem:/etc/gost/fullchain.pem
       - /etc/letsencrypt/live/${DOMAIN}/privkey.pem:/etc/gost/privkey.pem
-      - /opt/app/network-mall-admin/logs:/app/logs 
+      - /var/www/network-mall-gost/logs:/app/logs 
     network_mode: 'host'
     command: ['-C', '/etc/gost/config.yaml', '-D']
     restart: unless-stopped
