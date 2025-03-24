@@ -64,10 +64,10 @@ export class UsageRecordService {
    * @param incrementMap
    */
   async updateRecordsWithLock(incrementMap: Map<string, IUserIncrement>) {
-    // this.logger.log(
-    //   '[pluginService][updateRecordsWithLock] 待更新数据量：',
-    //   JSON.stringify(Object.fromEntries(incrementMap)),
-    // );
+    this.logger.log(
+      '[pluginService][updateRecordsWithLock] 待更新数据量：',
+      JSON.stringify(Object.fromEntries(incrementMap)),
+    );
     const userIds = Array.from(incrementMap.keys()).sort(); // 固定的顺序存取表中的行，这样只会发生锁的阻塞等待
     if (!userIds.length) return;
     try {
@@ -77,6 +77,7 @@ export class UsageRecordService {
             .createQueryBuilder(UsageRecord, 'usage_record')
             .setLock('pessimistic_write') // 行级锁
             .where('usage_record.userId IN (:...ids)', { ids: userIds })
+            .where('usage_record.purchaseStatus = 1')
             .getMany();
           if (!records.length) {
             this.logger.log(
@@ -93,13 +94,13 @@ export class UsageRecordService {
           records = records.map((v) => {
             const item = incrementMap.get(v.userId);
 
-            v.consumedDataTransfer = new Decimal(v.consumedDataTransfer)
+            v.consumedDataTransfer = new Decimal(v.consumedDataTransfer ?? 0)
               .plus(new Decimal(item?.totalByte))
               .toString();
-            v.consumedDataDownload = new Decimal(v.consumedDataDownload)
+            v.consumedDataDownload = new Decimal(v.consumedDataDownload ?? 0)
               .plus(new Decimal(item?.outputBytes))
               .toString();
-            v.consumedDataUpload = new Decimal(v.consumedDataUpload)
+            v.consumedDataUpload = new Decimal(v.consumedDataUpload ?? 0)
               .plus(new Decimal(item?.inputBytes))
               .toString();
 
@@ -139,6 +140,7 @@ export class UsageRecordService {
         '[pluginService][updateRecordsWithLock]  事务执行失败',
         e,
       );
+      console.log('e: ', e.toString());
     }
   }
 }
