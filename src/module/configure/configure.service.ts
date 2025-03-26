@@ -41,49 +41,48 @@ export class ConfigureService {
   async loadService() {
     const packageItems = await this.usageRecordService.findValidPackageitem();
 
-    if (!packageItems?.length) {
+    if (!packageItems.length) {
       this.logger.log('[configure.service][loadService] no users add');
       return;
     } else {
       this.logger.log(
-        '[configure.service][loadService] packageItems id: ',
-        packageItems?.map((v) => v.id),
+        '[configure.service][loadService] packageItem id: ',
+        packageItems,
       );
     }
     const ip = await systemInfo.getExternalIp();
-    packageItems.forEach(async (v, index) => {
-      try {
-        const params = {
-          name: `${ip}-${v.id}`,
-          addr: `:${this.beginPort + index}`,
-          ...DefaultGostConfig,
-        };
-        this.logger.log(
-          '[configure.service][loadService] update gost params',
-          params,
-        );
-        const data = await this.requestService.post<IGostReponse>(
-          `${this.gostHost}/api/config/services`,
-          params,
-        );
 
+    try {
+      const params = {
+        name: `${ip}-${packageItems[0].id}`,
+        addr: `:${this.beginPort}`,
+        ...DefaultGostConfig,
+      };
+      this.logger.log(
+        '[configure.service][loadService] update gost params',
+        params,
+      );
+      const data = await this.requestService.post<IGostReponse>(
+        `${this.gostHost}/api/config/services`,
+        params,
+      );
+
+      this.logger.log(
+        '[configure.service][loadService] update gost data',
+        data,
+      );
+      if (data.msg === 'OK') {
         this.logger.log(
-          '[configure.service][loadService] update gost data',
-          data,
-        );
-        if (data.msg === 'OK') {
-          this.logger.log(
-            '[configure.service][loadService] add Service success',
-            params.name,
-          );
-        }
-      } catch (e) {
-        this.logger.error(
-          '[configure.service][loadService] add Service faild',
-          JSON.stringify(e),
+          '[configure.service][loadService] add Service success',
+          params.name,
         );
       }
-    });
+    } catch (e) {
+      this.logger.error(
+        '[configure.service][loadService] add Service faild',
+        JSON.stringify(e),
+      );
+    }
   }
 
   /**

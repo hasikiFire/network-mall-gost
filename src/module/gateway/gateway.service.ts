@@ -20,11 +20,10 @@ import { DefaultGostConfig } from 'src/config/gost/gostConfig';
 @Injectable()
 export class GatewayService {
   private allowedMethods: string[] = [
-    'addGostService',
-    'deleteGostService',
-    'editGostService',
-
-    'deleteExpiredPackage',
+    // 'addGostService',
+    // 'deleteGostService',
+    // 'editGostService',
+    // 'deleteExpiredPackage',
     'updateUserPassword',
     'deleteUser',
   ];
@@ -73,8 +72,7 @@ export class GatewayService {
   }
 
   /**
-   * 新增套餐 => 等效新增 gost 端口（好像一个端口也不是不行...）
-   * 因为套餐数值已存在用户使用表中通过接口获取
+   * 新增套餐 => 新增 gost 端口
    *
    */
   async addGostService(serviceData: ServiceConfig) {
@@ -150,9 +148,9 @@ export class GatewayService {
    * 删除用户的缓存信息
    * 删除缓存让用户无法通过认证
    */
-  async deleteUser(userId: string) {
+  async deleteUser({ userID }: { userID: string }) {
     try {
-      this.deleteUserCache(userId);
+      this.deleteUserCache(userID);
       return ResultData.ok();
     } catch (error) {
       throw new Error(`删除缓存失败: ${error.message}`);
@@ -164,9 +162,9 @@ export class GatewayService {
    * @param userId
    * @returns
    */
-  async updateUserPassword({ userId }: { userId: string }) {
+  async updateUserPassword({ userID }: { userID: string }) {
     try {
-      await this.deleteUserCache(userId);
+      await this.deleteUserCache(userID);
       return ResultData.ok();
     } catch (error) {
       throw new Error(`修改用户密码失败: ${error.message}`);
@@ -174,6 +172,7 @@ export class GatewayService {
   }
 
   private deleteUserCache(userID: string) {
+    this.logger.log(`[GatewayService][deleteUserCache] userID: ${userID}`);
     try {
       const lKey = `${CacheKey.LIMITER}-${userID}`;
       const aKey = `${CacheKey.AUTH}-${userID}`;

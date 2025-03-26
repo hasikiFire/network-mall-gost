@@ -25,7 +25,7 @@ import { IUserIncrement } from 'types/gost';
 export class PluginService {
   private userTotalBytes = new Map<string, IUserIncrement>();
   private serverTotalBytes = new Decimal(0);
-  private readonly UHSER_RESET_THRESHOLD = 364088; // 当 userTotalBytes 的大小达到 364,088 时重置, 50MB
+  // private readonly UHSER_RESET_THRESHOLD = 364088; // 当 userTotalBytes 的大小达到 364,088 时重置, 50MB
   private readonly RESET_THRESHOLD = new Decimal('1e14'); // 例如，当值超过 10^18 时重置, 10PB
   private readonly BATCH_SIZE = 100;
 

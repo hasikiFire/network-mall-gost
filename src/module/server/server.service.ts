@@ -27,6 +27,7 @@ export class ServerService {
    * 加载服务器数据到数据库
    */
   async initServerStatus() {
+    if (process.env.NODE_ENV === 'development_local') return;
     this.ip4 = await SystemInfo.getExternalIp();
     this.logger.log('[serverService] initServerStatus server ip: ', this.ip4);
 
@@ -48,6 +49,7 @@ export class ServerService {
 
   @Cron('*/10 * * * *') // 每 10 分钟执行一次
   async refreshServerStatus() {
+    if (process.env.NODE_ENV == 'development_local') return;
     const serverData = await this.foreignServerRepository.findOne({
       where: {
         ipAddress: this.ip4,

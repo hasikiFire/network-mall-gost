@@ -87,7 +87,7 @@ export class UsageRecordService {
           }
 
           this.logger.log(
-            '[pluginService][updateRecordsWithLock] 使用记录userID：',
+            '[pluginService][updateRecordsWithLock] 本次使用userID：',
             userIds.map((v) => v),
           );
 

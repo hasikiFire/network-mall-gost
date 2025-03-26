@@ -88,6 +88,7 @@ export class RabbitMQService {
     resolve: (value: boolean | PromiseLike<boolean>) => void,
     reject: (reason?: any) => void,
   ): void {
+    this.logger.error('[RabbitMQ]', '连接url: ', this.rabbitmqUrl);
     amqp.connect(this.rabbitmqUrl, async (error0, connection) => {
       if (error0 || !connection) {
         this.logger.error('[RabbitMQ]', '连接失败:', error0);
@@ -103,7 +104,7 @@ export class RabbitMQService {
 
       // 添加连接错误处理
       connection.on('error', (err) => {
-        this.logger.error('[RabbitMQ]', '连接错误:', err);
+        this.logger.error('[RabbitMQ]', '连接错误，尝试重连', err);
         this.scheduleReconnect();
       });
 
@@ -146,11 +147,15 @@ export class RabbitMQService {
 
   private async setupExchangeAndQueue(channel: Channel): Promise<void> {
     await channel.assertExchange(this.exchange, 'fanout', { durable: true });
-    const q = await channel.assertQueue(this.queue, { durable: true });
-    await channel.bindQueue(q.queue, this.exchange, '');
-    this.logger.log('[RabbitMQ]', `队列 ${this.queue} 准备完成`);
+    this.logger.log('[RabbitMQ]', `Fanout 交换机 ${this.exchange} 准备完成`);
 
-    this.setupMessageConsumer(channel, q.queue);
+    // 每个客户端创建独立匿名队列
+    const { queue } = await channel.assertQueue('', { exclusive: true });
+    await channel.bindQueue(queue, this.exchange, ''); // 空路由键
+    this.logger.log('[RabbitMQ]', `队列 ${queue} 绑定到 ${this.exchange} 完成`);
+    this.setupMessageConsumer(channel, queue);
+
+    // this.setupMessageConsumer(channel, this.queue);
   }
 
   private scheduleReconnect(): void {
@@ -180,23 +185,24 @@ export class RabbitMQService {
     channel.consume(
       queue,
       async (msg) => {
+        this.logger.log('[RabbitMQ] 消费者回调被触发', msg);
         // console.log('msg: ', msg);
         if (msg !== null) {
           const headers = msg.properties.headers;
           const apiKey = headers['x-api-key'];
           const isValid = await this.isValidApiKey(apiKey);
           if (isValid) {
-            // API key 校验函数
-            this.logger.log(
-              '[RabbitMQ]',
-              `收到消息: ${msg.content.toString()}`,
-            );
+            const content = msg.content.toString();
             try {
-              const message = JSON.parse(msg.content.toString());
-              this.handleMqMessage(message);
+              const message = JSON.parse(content);
+              this.logger.log('[RabbitMQ] 解析后的 message', ` ${content}`);
+              await this.handleMqMessage(message);
               channel.ack(msg); // 确认收到消息
             } catch (error) {
-              this.logger.error('[RabbitMQ]', `消息解析失败: ${error.message}`);
+              this.logger.error(
+                '[RabbitMQ] 消息解析失败: ',
+                ` ${error.message}`,
+              );
             }
           } else {
             this.logger.error('[RabbitMQ]', `无效的 API key`);
@@ -208,6 +214,7 @@ export class RabbitMQService {
         noAck: false, // 开启消息确认机制
       },
     );
+    this.logger.log('[RabbitMQ]', `消费者已注册，监听队列: ${queue}`); // 添加这行
   }
 
   // 转发消息的方法，根据方法名动态调用
@@ -216,15 +223,21 @@ export class RabbitMQService {
     try {
       this.logger.log(
         '[RabbitMQ] handleMqMessage start',
-        `method: ${method}, params: ${JSON.stringify(params)}`,
+        // `method: `,
+        // method,
+        // `params: `,
+        // params,
       );
 
       // 动态调用对应的服务方法
-      this.gatewayService.handleRequest(method, params);
+      await this.gatewayService.handleRequest(method, params);
     } catch (error) {
       this.logger.error(
         '[RabbitMQ] handleMqMessage error',
-        `method: ${method}, params: ${JSON.stringify(params)}`,
+        `method: `,
+        method,
+        `params: `,
+        params,
         error,
       );
     }
@@ -247,15 +260,14 @@ export class RabbitMQService {
   }
 
   private async isValidApiKey(apiKey: string): Promise<boolean> {
-    // const getAllKeysAndValues =
-    //   await this.redisInstanceService.getAllKeysAndValues();
-    // console.log(' redis getAllKeysAndValues: ', getAllKeysAndValues);
-
     const key = await this.redisInstanceService.get(
       RedisCache.GOST_SERVER_API_KEY,
     );
+    // this.logger.log(
+    //   '[RabbitMQ] 校验Key',
+    //   `待校验Key：${apiKey}, 校验Key: ${key}`,
+    // );
     if (key === apiKey) return true;
-    // 在这里实现你的 API key 校验逻辑
     return false;
   }
 
