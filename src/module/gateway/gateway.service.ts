@@ -39,24 +39,24 @@ export class GatewayService {
   }
 
   async handleRequest(method: string, params: any): Promise<any> {
-    if (this.allowedMethods.includes(method)) {
-      try {
-        // 动态调用 allowedMethods 列表中的方法
-        await this[method](params);
-        this.logger.log('[GatewayService] handleRequest success');
-      } catch (error) {
-        this.logger.error(
-          `[GatewayService] handleRequest error. invoking method: ${method}, error:`,
-          error,
-        );
-        // throw new Error(
-        //   `Error invoking method: ${method}, details: ${error.message}`,
-        // );
-      }
-    } else {
+    if (!this.allowedMethods.includes(method) || !this[method]) {
       this.logger.error(
         `[GatewayService] handleRequest error. Method ${method} is not allowed or does not exist.`,
       );
+      return;
+    }
+    try {
+      // 动态调用 allowedMethods 列表中的方法
+      await this[method](params);
+      this.logger.log('[GatewayService] handleRequest success');
+    } catch (error) {
+      this.logger.error(
+        `[GatewayService] handleRequest error. invoking method: ${method}, error:`,
+        error,
+      );
+      // throw new Error(
+      //   `Error invoking method: ${method}, details: ${error.message}`,
+      // );
     }
   }
 
